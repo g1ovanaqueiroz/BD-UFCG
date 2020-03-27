@@ -59,7 +59,7 @@ preco NUMERIC
 
 CREATE TABLE venda (
 codigo INTEGER PRIMARY KEY,
-vendedor CHAR(11) REFERENCES funcionario (cpf) NOT NULL,
+vendedor CHAR(11) REFERENCES funcionario (cpf) NOT NULL ON DELETE RESTRICT,,
 cliente CHAR(11) REFERENCES cliente (cpf),
 farmacia INTEGER REFERENCES farmacia (id) NOT NULL
 );
@@ -67,7 +67,7 @@ farmacia INTEGER REFERENCES farmacia (id) NOT NULL
 -- QUAIS MEDICAMENTOS ESTAO ASSOCIADOS A CADA VENDA
 CREATE TABLE venda_medicamento (
 codigo_venda INTEGER REFERENCES venda (codigo) NOT NULL,
-medicamento INTEGER REFERENCES medicamento (codigo) NOT NULL
+medicamento INTEGER REFERENCES medicamento (codigo) NOT NULL ON DELETE RESTRICT
 );
 
 -- UMA ENTREGA SO PODE SER FEITA A UM CLIENTE CADASTRADO E COM ENDERECO CADASTRADO
