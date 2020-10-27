@@ -16,8 +16,8 @@ SELECT s.fname AS nome_supervisor, COUNT(*) AS atd_supervisionados FROM employee
 -- Q6
 SELECT MIN(empregados.emp) AS qtd FROM (SELECT COUNT(pno) AS emp FROM works_on GROUP BY pno) AS empregados;
 
--- Q7 ERRADA CONCERTAR
---SELECT empregados.pno AS num_projeto, MIN(empregados.emp) AS qtd_func FROM (SELECT pno, COUNT(pno) AS emp FROM works_on GROUP BY pno) AS empregados GROUP BY empregados.pno;
+-- Q7
+SELECT pno AS proj, COUNT(essn) AS qtd FROM works_on GROUP BY pno HAVING COUNT(essn) = ( SELECT MIN(qtd) AS qtd_empregados FROM (SELECT COUNT(essn) AS qtd FROM works_on GROUP BY pno) as qtds);
 
 -- Q8
 SELECT w.pno AS num_proj, AVG(e.salary) AS media_sal FROM employee AS e JOIN works_on AS w ON e.ssn = w.essn GROUP BY w.pno;
@@ -26,3 +26,15 @@ SELECT w.pno AS num_proj, AVG(e.salary) AS media_sal FROM employee AS e JOIN wor
 SELECT w.pno AS num_proj, p.pname AS proj_nome, AVG(e.salary) AS media_sal FROM employee AS e JOIN works_on AS w ON e.ssn = w.essn JOIN project AS p ON p.pnumber = w.pno GROUP BY w.pno, p.pnumber;
 
 -- Q10
+SELECT e.fname, e.salary FROM employee AS e, (SELECT MAX(emp.salary) AS salary FROM  employee AS emp, works_on AS w WHERE w.essn = emp.ssn AND w.pno = 92) AS s WHERE e.salary > s.salary;
+
+-- Q11
+SELECT e.ssn, COUNT(w.essn) AS qtd_proj FROM employee as e LEFT JOIN works_on AS w on e.ssn = w.essn GROUP BY e.ssn ORDER BY COUNT(w.essn);
+
+-- Q12
+
+-- Q13
+
+-- Q14
+
+-- Q15
