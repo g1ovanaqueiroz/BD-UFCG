@@ -32,9 +32,13 @@ SELECT e.fname, e.salary FROM employee AS e, (SELECT MAX(emp.salary) AS salary F
 SELECT e.ssn, COUNT(w.essn) AS qtd_proj FROM employee as e LEFT JOIN works_on AS w on e.ssn = w.essn GROUP BY e.ssn ORDER BY COUNT(w.essn);
 
 -- Q12
+SELECT * FROM (SELECT w.pno    AS num_proj, COUNT(e.ssn) AS qtd_func FROM (employee  AS e FULL OUTER JOIN works_on AS w ON (w.essn = e.ssn))  GROUP BY w.pno) AS ew WHERE ew.qtd_func < 5;
 
 -- Q13
+SELECT DISTINCT s.fname AS fname FROM employee AS s, dependent AS d, works_on AS w, project AS p WHERE (p.plocation LIKE '%Sugarland%' AND p.pnumber = w.pno AND w.essn = s.ssn AND s.ssn = d.essn);
 
 -- Q14
+SELECT dname FROM department WHERE NOT EXISTS (SELECT dnum FROM project WHERE dnumber = dnum);
 
 -- Q15
+SELECT DISTINCT fname, lname FROM employee AS e, works_on WHERE essn = ssn AND ssn <> '123456789' AND NOT EXISTS ((SELECT pno FROM works_on WHERE essn = '123456789') EXCEPT(SELECT pno FROM works_on WHERE essn = e.ssn));
