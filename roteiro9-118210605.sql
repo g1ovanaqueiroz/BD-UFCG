@@ -9,3 +9,4 @@ CREATE VIEW vw_empl_houston AS SELECT e.fname, e.ssn FROM employee AS e WHERE e.
 CREATE VIEW vw_deptstats AS SELECT d.dnumber, d.dname, COUNT (e.dno) AS qtd_funcionarios FROM department AS d, employee AS e  WHERE d.dnumber = e.dno GROUP BY d.dnumber;
 
 -- D. vw_projstats: contém o id do projeto e a quantidade de funcionários que trabalham no projeto;
+CREATE VIEW vw_projstats AS SELECT p.pnumber AS project_id, COUNT (w.pno) AS qtd_func FROM project AS p, works_on AS w WHERE p.pnumber = w.pno GROUP BY p.pnumber;
