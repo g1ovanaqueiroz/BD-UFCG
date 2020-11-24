@@ -6,5 +6,6 @@ CREATE VIEW vw_dptmgr AS SELECT d.dnumber AS department, e.fname || ' ' || e.lna
 CREATE VIEW vw_empl_houston AS SELECT e.fname, e.ssn FROM employee AS e WHERE e.address LIKE '%Houston%';
 
 -- C. vw_deptstats: contém o número do departamento, o nome do departamento e o número de funcionários que trabalham no departamento;
+CREATE VIEW vw_deptstats AS SELECT d.dnumber, d.dname, COUNT (e.dno) AS qtd_funcionarios FROM department AS d, employee AS e  WHERE d.dnumber = e.dno GROUP BY d.dnumber;
 
 -- D. vw_projstats: contém o id do projeto e a quantidade de funcionários que trabalham no projeto;
