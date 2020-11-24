@@ -20,3 +20,7 @@ SELECT * FROM vw_deptstats WHERE qtd_funcionarios > 9;
 SELECT * FROM vw_projstats WHERE qtd_func > 5;
 
 -- Questao 3
+DROP VIEW vw_dptmgr;
+DROP VIEW vw_empl_houston;
+DROP VIEW vw_deptstats;
+DROP VIEW vw_projstats;
