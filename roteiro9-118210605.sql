@@ -1,0 +1,2 @@
+-- Questão 1
+-- A) vw_dptmgr: contém apenas o número do departamento e o nome do gerente;
