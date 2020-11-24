@@ -26,3 +26,20 @@ DROP VIEW vw_deptstats;
 DROP VIEW vw_projstats;
 
 -- Questão 4
+CREATE FUNCTION check_age(essn CHAR(9))
+RETURNS text AS $$
+
+DECLARE bdate date;
+
+BEGIN
+  SELECT e.bdate INTO bdate FROM employee AS e WHERE e.ssn = essn;
+  IF bdate IS NULL THEN
+    RETURN 'UNKNOWN';
+  ELSIF bdate > CURRENT_DATE THEN
+    RETURN 'INVALID';
+  ELSIF EXTRACT(YEAR FROM AGE(CURRENT_DATE, bdate)) > 49 THEN
+    RETURN 'SENIOR';
+  ELSE RETURN 'YOUNG';
+  END IF;
+END;
+$$  LANGUAGE plpgsql;
