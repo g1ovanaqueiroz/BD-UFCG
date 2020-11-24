@@ -3,6 +3,7 @@
 CREATE VIEW vw_dptmgr AS SELECT d.dnumber AS department, e.fname || ' ' || e.lname AS manager FROM department AS d, employee AS e WHERE e.ssn = d.mgrssn;
 
 -- B. vw_empl_houston: contém o ssn e o primeiro nome dos empregados com endereço em Houston;
+CREATE VIEW vw_empl_houston AS SELECT e.fname, e.ssn FROM employee AS e WHERE e.address LIKE '%Houston%';
 
 -- C. vw_deptstats: contém o número do departamento, o nome do departamento e o número de funcionários que trabalham no departamento;
 
