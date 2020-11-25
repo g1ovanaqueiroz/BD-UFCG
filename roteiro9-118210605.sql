@@ -43,3 +43,92 @@ BEGIN
   END IF;
 END;
 $$  LANGUAGE plpgsql;
+
+-- Questão 5
+-- A. Caso já tenha criado, remova a trigger:
+DROP TRIGGER check_mgr ON department;
+
+-- B. Insira um departamento com dnumber = 2, tendo como gerente o empregado com ssn = '999999999'.
+INSERT INTO department VALUES ('Test', 2, '999999999', now());
+
+-- C. Insira um novo employee com ssn = '999999999' e que atenda aos requisitos 2 e 3 para ser gerente. Insira também um subordinado.
+-- employee '999999999'
+INSERT INTO employee VALUES ('Joao','A','Silva','999999999','10-OCT-1950','123 Peachtree, Atlanta, GA','M',85000,null,2);
+
+-- employee '999999998', subordinado ao anterior
+INSERT INTO employee VALUES ('Jose','A','Santos','999999998','10-OCT-1950','123 Peachtree, Atlanta, GA','M',85000,'999999999',2);
+
+-- D. Crie a trigger;
+CREATE FUNCTION check_mgr() RETURNS TRIGGER AS $check_mgr$
+  BEGIN
+
+    -- Se não for um funcionário atualmente alocado no departamento
+    IF NOT EXISTS (SELECT e.ssn FROM employee AS e WHERE e.ssn = NEW.mgrssn AND e.dno = NEW.dnumber) THEN
+      RAISE EXCEPTION 'manager must be a department''s employee';
+    END IF;
+
+    -- Se não possuir subordinados
+    IF NOT EXISTS (SELECT e.ssn FROM employee AS e WHERE e.superssn = NEW.mgrssn) THEN
+      RAISE EXCEPTION 'manager must have supevisees';
+    END IF;
+
+    -- Se não for 'SENIOR'
+    IF check_age(NEW.mgrssn) != 'SENIOR' THEN
+      RAISE EXCEPTION 'manager must be a SENIOR employee';
+    END IF;
+  
+  RETURN NEW;
+  END;
+  $check_mgr$ LANGUAGE plpgsql;
+
+CREATE TRIGGER check_mgr BEFORE INSERT OR UPDATE ON department
+  FOR EACH ROW EXECUTE PROCEDURE check_mgr();
+
+-- E. Agora execute os comandos abaixo e verifique se obteve os mesmos resultados.
+
+-- o update funciona normalmente
+UPDATE department SET mgrssn = '999999999' WHERE dnumber=2;
+
+-- não permite executar update
+-- ERROR:  manager must be a department's employee
+UPDATE department SET mgrssn = null WHERE dnumber=2;
+
+-- não permite executar update porque esse employee não existe
+-- ERROR:  manager must be a department's employee
+UPDATE department SET mgrssn = '999' WHERE dnumber=2;
+
+-- não permite executar update pois o employee não é do departamento
+-- ERROR:  manager must be a department's employee
+UPDATE department SET mgrssn = '111111100' WHERE dnumber=2;
+
+-- altera a data de nascimento do employee para que ele deixe de ser Sênior
+-- UPDATE 1
+UPDATE employee SET bdate = '10-OCT-2000' WHERE ssn = '999999999';
+
+-- não permite executar update
+-- ERROR:  manager must be a SENIOR employee
+UPDATE department SET mgrssn = '999999999' WHERE dnumber=2;
+
+-- altera a data de nascimento do employee para que ele volte a ser Sênior
+-- UPDATE 1
+UPDATE employee SET bdate = '10-OCT-1950' WHERE ssn = '999999999';
+
+-- o update funciona normalmente
+-- UPDATE 1
+UPDATE department SET mgrssn = '999999999' WHERE dnumber=2;
+
+--remove os subordinados
+-- DELETE 1
+DELETE FROM employee WHERE superssn = '999999999';
+
+-- não permite executar update pois o empregado não tem subordinados
+-- ERROR:  manager must have supevisees
+UPDATE department SET mgrssn = '999999999' WHERE dnumber=2;
+
+--remove o employee '999999999'
+-- DELETE 1
+DELETE FROM employee WHERE ssn = '999999999';
+
+--Remove o departamento 2
+-- DELETE 1
+DELETE FROM department where dnumber=2;
